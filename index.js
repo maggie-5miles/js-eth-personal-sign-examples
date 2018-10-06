@@ -308,6 +308,9 @@ signTypedDataV3Button.addEventListener('click', function(event) {
   var params = [JSON.stringify(typedData), from]
   console.dir(params)
   var method = 'eth_signTypedData_v3'
+  if (web3.currentProvider.isTrust) {
+    method = 'eth_signTypedData'
+  }
 
   web3.currentProvider.sendAsync({
     method,
