@@ -1,3 +1,17 @@
+(function() {
+  console.origLog = console.log;
+  console.log = function(message) {
+    var logger = document.getElementById('console-log');
+    if (typeof message == 'object') {
+      logger.innerHTML += '<p>' + (JSON && JSON.stringify ? JSON.stringify(message) : message) + '</p>';
+    } else {
+      logger.innerHTML += '<p>' + message + '<br />';
+    }
+    console.origLog(message);
+  }
+  console.dir = console.log;
+})();
+
 var ethUtil = require('ethereumjs-util')
 var sigUtil = require('eth-sig-util')
 var Eth = require('ethjs')
@@ -12,7 +26,7 @@ ethSignButton.addEventListener('click', function(event) {
   var from = web3.eth.accounts[0]
   web3.eth.sign(from, msg, function (err, result) {
     if (err) return console.error(err)
-    console.log('SIGNED:' + result)
+    console.log('SIGNED: ' + result)
   })
 })
 
@@ -33,7 +47,7 @@ personalSignButton.addEventListener('click', function(event) {
     })
   */
 
-   console.log('CLICKED, SENDING PERSONAL SIGN REQ')
+  console.log('CLICKED, SENDING personal_sign REQ')
   var params = [msg, from]
   var method = 'personal_sign'
 
@@ -60,30 +74,7 @@ personalSignButton.addEventListener('click', function(event) {
       console.log('SigUtil Failed to verify signer when comparing ' + recovered.result + ' to ' + from)
       console.log('Failed, comparing %s to %s', recovered, from)
     }
-
-
-    /*
-    method = 'personal_ecRecover'
-    var params = [msg, result.result]
-    web3.currentProvider.sendAsync({
-      method,
-      params,
-      from,
-    }, function (err, recovered) {
-      console.dir({ err, recovered })
-      if (err) return console.error(err)
-      if (result.error) return console.error(result.error)
-
-      if (result.result === from ) {
-        console.log('Successfully verified signer as ' + from)
-      } else {
-        console.log('Failed to verify signer when comparing ' + result.result + ' to ' + from)
-      }
-
-    })
-    */
   })
-
 })
 
 
@@ -104,7 +95,7 @@ personalRecoverTest.addEventListener('click', function(event) {
     })
   */
 
-   console.log('CLICKED, SENDING PERSONAL SIGN REQ')
+  console.log('CLICKED, SENDING personal_sign SIGN REQ')
   var params = [msg, from]
   var method = 'personal_sign'
 
@@ -140,7 +131,6 @@ personalRecoverTest.addEventListener('click', function(event) {
       } else {
         console.log('Failed to verify signer when comparing ' + result + ' to ' + from)
       }
-
     })
   })
 
@@ -152,7 +142,7 @@ ethjsPersonalSignButton.addEventListener('click', function(event) {
   var msg = ethUtil.bufferToHex(new Buffer(text, 'utf8'))
   var from = web3.eth.accounts[0]
 
-  console.log('CLICKED, SENDING PERSONAL SIGN REQ')
+  console.log('CLICKED, SENDING personal_sign REQ')
   var params = [from, msg]
 
   // Now with Eth.js
@@ -160,7 +150,7 @@ ethjsPersonalSignButton.addEventListener('click', function(event) {
 
   eth.personal_sign(msg, from)
   .then((signed) => {
-    console.log('Signed!  Result is: ', signed)
+    console.log('Signed!  Result is: ' + signed)
     console.log('Recovering...')
 
     return eth.personal_ecRecover(msg, signed)
@@ -204,7 +194,7 @@ signTypedDataButton.addEventListener('click', function(event) {
     })
   */
 
-   console.log('CLICKED, SENDING PERSONAL SIGN REQ')
+   console.log('CLICKED, SENDING eth_signTypedData REQ')
   var params = [msgParams, from]
   console.dir(params)
   var method = 'eth_signTypedData'
@@ -216,17 +206,17 @@ signTypedDataButton.addEventListener('click', function(event) {
   }, function (err, result) {
     if (err) return console.dir(err)
     if (result.error) {
-      alert(result.error.message)
+      console.log(result.error.message)
     }
     if (result.error) return console.error(result)
-    console.log('PERSONAL SIGNED:' + JSON.stringify(result.result))
+    console.log('eth_signTypedData SIGNED:' + JSON.stringify(result.result))
 
     const recovered = sigUtil.recoverTypedSignature({ data: msgParams, sig: result.result })
 
     if (recovered === from ) {
-      alert('Successfully ecRecovered signer as ' + from)
+      console.log('Successfully ecRecovered signer as ' + from)
     } else {
-      alert('Failed to verify signer when comparing ' + result + ' to ' + from)
+      console.log('Failed to verify signer when comparing ' + result + ' to ' + from)
     }
 
   })
@@ -251,23 +241,92 @@ ethjsSignTypedDataButton.addEventListener('click', function(event) {
 
   var from = web3.eth.accounts[0]
 
-  console.log('CLICKED, SENDING PERSONAL SIGN REQ')
+  console.log('CLICKED, SENDING eth_signTypedData REQ')
   var params = [msgParams, from]
 
   var eth = new Eth(web3.currentProvider)
 
   eth.signTypedData(msgParams, from)
   .then((signed) => {
-    console.log('Signed!  Result is: ', signed)
+    console.log('Signed!  Result is: ' + signed)
     console.log('Recovering...')
 
     const recovered = sigUtil.recoverTypedSignature({ data: msgParams, sig: signed })
 
     if (recovered === from ) {
-      alert('Successfully ecRecovered signer as ' + from)
+      console.log('Successfully ecRecovered signer as ' + from)
     } else {
-      alert('Failed to verify signer when comparing ' + signed + ' to ' + from)
+      console.log('Failed to verify signer when comparing ' + signed + ' to ' + from)
     }
 
+  })
+})
+
+signTypedDataV3Button.addEventListener('click', function(event) {
+  event.preventDefault()
+
+  const typedData = {
+    types: {
+        EIP712Domain: [
+            { name: 'name', type: 'string' },
+            { name: 'version', type: 'string' },
+            { name: 'chainId', type: 'uint256' },
+            { name: 'verifyingContract', type: 'address' },
+        ],
+        Person: [
+            { name: 'name', type: 'string' },
+            { name: 'wallet', type: 'address' }
+        ],
+        Mail: [
+            { name: 'from', type: 'Person' },
+            { name: 'to', type: 'Person' },
+            { name: 'contents', type: 'string' }
+        ],
+    },
+    primaryType: 'Mail',
+    domain: {
+        name: 'Ether Mail',
+        version: '1',
+        chainId: 1,
+        verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+    },
+    message: {
+        from: {
+            name: 'Cow',
+            wallet: '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826',
+        },
+        to: {
+            name: 'Bob',
+            wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+        },
+        contents: 'Hello, Bob!',
+    },
+  };
+
+  var from = web3.eth.accounts[0]
+  console.log('CLICKED, SENDING eth_signTypedData_v3 REQ')
+  var params = [JSON.stringify(typedData), from]
+  console.dir(params)
+  var method = 'eth_signTypedData_v3'
+
+  web3.currentProvider.sendAsync({
+    method,
+    params,
+    from,
+  }, function (err, result) {
+    if (err) return console.dir(err)
+    if (result.error) {
+      console.log(result.error.message)
+    }
+    if (result.error) return console.error(result)
+    console.log('eth_signTypedData_v3 SIGNED:' + JSON.stringify(result.result))
+
+    const recovered = sigUtil.recoverTypedSignature({ data: msgParams, sig: result.result })
+
+    if (recovered === from ) {
+      console.log('Successfully ecRecovered signer as ' + from)
+    } else {
+      console.log('Failed to verify signer when comparing ' + result + ' to ' + from)
+    }
   })
 })
