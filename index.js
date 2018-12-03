@@ -20,6 +20,14 @@ window.Eth = Eth
 var fs = require('fs')
 var terms = fs.readFileSync(__dirname + '/terms.txt').toString()
 
+requestAccountsButton.addEventListener('click', function(event) {
+  window.ethereum.enable().then(function(results) {
+    console.log("results: " + results)
+  }).catch(function(error) {
+    console.log(error)
+  })
+})
+
 ethSignButton.addEventListener('click', function(event) {
   event.preventDefault()
   var msg = '0x879a053d4800c6354e76c7985a865d2922c82fb5b3f4577b2fe08b998954f2e0'
