@@ -21,8 +21,8 @@ var fs = require('fs')
 var terms = fs.readFileSync(__dirname + '/terms.txt').toString()
 
 requestAccountsButton.addEventListener('click', function(event) {
-  window.ethereum.enable().then(function(results) {
-    console.log("results: " + results)
+  window.ethereum.enable().then(function(result) {
+    console.log("result: " + JSON.stringify(result.result))
   }).catch(function(error) {
     console.log(error)
   })
