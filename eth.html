@@ -1,0 +1,36 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title>Eth Sign Tests</title>
+    <script type="text/javascript">
+      window.addEventListener("load", () => {
+        if (typeof web3 !== 'undefined') {
+          window.web3 = new Web3(web3.currentProvider)
+        }
+      })
+    </script>
+  </head>
+
+  <body>
+    <button id="requestAccountsButton">eth_requestAccounts</button>
+    <button id="ethSignButton">eth_sign</button>
+    <button id="personalSignButton">personal_sign</button>
+    <button id="personalRecoverTest">personal_ecRecover</button>
+    <button id="ethjsPersonalSignButton">ethjs personal sign</button>
+    <button id="signTypedDataV3Button">sign typed data</button>
+    <button id="signTypedDataButton">LEGACY sign typed data</button>
+    <button id="ethjsSignTypedDataButton">LEGACY sign typed data with ethjs</button>
+
+    <br>
+    <a href="https://github.com/hewigovens/js-eth-personal-sign-examples">View the source code on Github</a>
+    <br />
+    <div id="console-log">
+      <p>console.log</p>
+    </div>
+  </body>
+
+  <!-- <script src="./index.js"></script> -->
+  <script src="./eth-bundle.js"></script>
+
+</html>

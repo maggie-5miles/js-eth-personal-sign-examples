@@ -31,8 +31,8 @@ requestAccountsButton.addEventListener('click', function(event) {
 ethSignButton.addEventListener('click', function(event) {
   event.preventDefault()
   var msg = '0x879a053d4800c6354e76c7985a865d2922c82fb5b3f4577b2fe08b998954f2e0'
-  var from = web3.cmt.accounts[0]
-  web3.cmt.sign(from, msg, function (err, result) {
+  var from = web3.eth.accounts[0]
+  web3.eth.sign(from, msg, function (err, result) {
     if (err) return console.error(err)
     console.log('SIGNED: ' + result)
   })
@@ -44,7 +44,7 @@ personalSignButton.addEventListener('click', function(event) {
   var msg = ethUtil.bufferToHex(new Buffer(text, 'utf8'))
   // var msg = '0x1' // hexEncode(text)
   console.log(msg)
-  var from = web3.cmt.accounts[0]
+  var from = web3.eth.accounts[0]
 
   /*  web3.personal.sign not yet implemented!!!
    *  We're going to have to assemble the tx manually!
@@ -92,7 +92,7 @@ personalRecoverTest.addEventListener('click', function(event) {
   var msg = ethUtil.bufferToHex(new Buffer(text, 'utf8'))
   // var msg = '0x1' // hexEncode(text)
   console.log(msg)
-  var from = web3.cmt.accounts[0]
+  var from = web3.eth.accounts[0]
 
   /*  web3.personal.sign not yet implemented!!!
    *  We're going to have to assemble the tx manually!
@@ -148,7 +148,7 @@ ethjsPersonalSignButton.addEventListener('click', function(event) {
   event.preventDefault()
   var text = terms
   var msg = ethUtil.bufferToHex(new Buffer(text, 'utf8'))
-  var from = web3.cmt.accounts[0]
+  var from = web3.eth.accounts[0]
 
   console.log('CLICKED, SENDING personal_sign REQ')
   var params = [from, msg]
@@ -191,12 +191,12 @@ signTypedDataButton.addEventListener('click', function(event) {
     }
   ]
 
-  var from = web3.cmt.accounts[0]
+  var from = web3.eth.accounts[0]
 
-  /*  web3.cmt.signTypedData not yet implemented!!!
+  /*  web3.eth.signTypedData not yet implemented!!!
    *  We're going to have to assemble the tx manually!
    *  This is what it would probably look like, though:
-    web3.cmt.signTypedData(msg, from) function (err, result) {
+    web3.eth.signTypedData(msg, from) function (err, result) {
       if (err) return console.error(err)
       console.log('PERSONAL SIGNED:' + result)
     })
@@ -247,7 +247,7 @@ ethjsSignTypedDataButton.addEventListener('click', function(event) {
     }
   ]
 
-  var from = web3.cmt.accounts[0]
+  var from = web3.eth.accounts[0]
 
   console.log('CLICKED, SENDING eth_signTypedData REQ')
   var params = [msgParams, from]
@@ -311,7 +311,7 @@ signTypedDataV3Button.addEventListener('click', function(event) {
     },
   };
 
-  var from = web3.cmt.accounts[0]
+  var from = web3.eth.accounts[0]
   console.log('CLICKED, SENDING eth_signTypedData_v3 REQ')
   var params = [from, JSON.stringify(typedData)]
   console.dir(params)
