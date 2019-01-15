@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>CMT SendTransaction Tests</title>
+  </head>
+
+  <body>
+    <button id="send" onclick="sendtx()">sendtx</button>
+    <div id="sendresult"></div>
+  </body>
+
+  <script>
+    function sendtx() {
+      web3.cmt.sendTransaction(
+        {
+          from: web3.cmt.defaultAccount,
+          to: "0x011c6dd9565b8b83e6a9ee3f06e89ece3251ef2f",
+          value: 500000000000000000
+        },
+        function(e, tx) {
+          if (e) {
+            console.log(e)
+            document.getElementById("sendresult").innerHTML =
+              "web3.cmt.sendTransaction FAILED: " + e
+            return
+          }
+          document.getElementById("sendresult").innerHTML = tx
+        }
+      )
+    }
+  </script>
+</html>
